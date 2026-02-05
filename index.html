@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рандомайзер списков (Firebase)</title>
+    <style>
+        @charset "UTF-8";
+
+        /* --- 1. ПЕРЕМЕННЫЕ И БАЗОВЫЕ НАСТРОЙКИ --- */
+        :root {
+            --color-light-gray: #A6A6A6;
+            --color-gray: #4A4A4A;
+            --color-dark-gray: #222222;
+            --color-white: #fff;
+            --color-background-gray: #F5F5F5;
+            --font-sans: "Inter", sans-serif;
+            --color-blue-bg: #e3f2fd;
+            --color-blue-border: #2196f3;
+            --color-blue-text: #0d47a1;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            border: 0;
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            font-family: var(--font-sans);
+            color: var(--color-gray);
+        }
+
+        input,
+        button,
+        textarea {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        /* --- 2. ТИПОГРАФИКА --- */
+        h1 {
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: var(--color-gray);
+            margin: 30px 0 30px 0;
+            text-align: center;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: var(--color-gray);
+            margin-top: 70px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 48px;
+        }
+
+        .centration {
+            max-width: 800px;
+            margin: 0 auto 56px;
+            padding: 0 8px;
+        }
+
+        /* --- 3. ЛЕЙАУТ --- */
+        .wrapper {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header_container {
+            padding-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer_container {
+            padding-top: 65px;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .footer_copyright {
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            color: var(--color-light-gray);
+        }
+
+        /* --- 4. ПАНЕЛЬ УПРАВЛЕНИЯ --- */
+        .controls-container {
+            max-width: 800px;
+            margin: 48px auto;
+            padding: 24px;
+            border: 1px solid var(--color-light-gray);
+            background-color: var(--color-background-gray);
+            border-radius: 8px;
+        }
+
+        /* Статус Firebase */
+        .firebase-status {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--color-blue-bg);
+            border-radius: 8px;
+            border: 1px solid var(--color-blue-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .firebase-status {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-dark-gray);
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--color-light-gray);
+            font-size: 1rem;
+            color: var(--color-gray);
+            background-color: var(--color-white);
+            border-radius: 4px;
+        }
+
+        .custom-input:focus {
+            border-color: var(--color-gray);
+            outline: none;
+        }
+
+        /* --- 5. КАСТОМНЫЕ СЕЛЕКТЫ --- */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-selected {
+            background-color: var(--color-white);
+            border: 1px solid var(--color-light-gray);
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-gray);
+        }
+
+        .select-selected.disabled {
+            background-color: #eee;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .select-arrow {
+            border: solid var(--color-gray);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            transition: transform 0.2s ease;
+            margin-right: 5px;
+            margin-bottom: 2px;
+        }
+
+        .select-selected.select-arrow-active .select-arrow {
+            transform: rotate(-135deg);
+            margin-bottom: -2px;
+        }
+
+        .select-items {
+            position: absolute;
+            background-color: var(--color-white);
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            border: 1px solid var(--color-light-gray);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .select-hide {
+            display: none;
+        }
+
+        #category-search-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-bottom: 1px solid var(--color-light-gray);
+            outline: none;
+            background-color: #FAFAFA;
+        }
+
+        .option-item {
+            color: var(--color-dark-gray);
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .option-item:hover {
+            background-color: var(--color-background-gray);
+        }
+
+        /* --- 6. КНОПКИ --- */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid var(--color-gray);
+            background-color: transparent;
+            color: var(--color-gray);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .btn:hover {
+            background-color: var(--color-gray);
+            color: var(--color-white);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* --- 7. РЕЗУЛЬТАТЫ --- */
+        .result-container {
+            margin-top: 48px;
+        }
+
+        #result-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--color-background-gray);
+        }
+
+        #result-list li::before {
+            content: "—";
+            margin-right: 10px;
+            color: var(--color-light-gray);
+            font-weight: bold;
+        }
+
+        .frequency-span {
+            color: var(--color-light-gray);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* --- 8. МОДАЛЬНЫЕ ОКНА --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--color-light-gray);
+        }
+
+        .modal-close-btn:hover {
+            color: var(--color-dark-gray);
+        }
+
+        .info-icon-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 20px;
+            height: 20px;
+            background-color: var(--color-light-gray);
+            color: var(--color-white);
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .label-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .label-wrapper label {
+            margin-bottom: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <h1>Рандомайзер списков</h1>
+
+        <div class="centration">
+            <div class="tool-description">
+                <p class="intro">Этот инструмент позволяет генерировать случайные списки поисковых запросов из различных
+                    категорий, по которым нам необходимо откликаться.</p>
+                <p class="intro">Инструмент не делает всю работу за вас, а лишь ускоряет там, где уже была собрана БД
+                    запросов. Там, где их нет - вы должны собирать их самостоятельно. Вы так же можете дополнять БД
+                    запросов, для облегчения своей работы и работы коллег в будущем.</p>
+            </div>
+
+            <div class="controls-container">
+
+                <!-- Блок статуса Firebase -->
+                <div class="firebase-status">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: var(--color-blue-text);">Облачная
+                            база данных</h3>
+                        <p id="connection-status" style="margin: 0; font-size: 0.9rem; color: #555;">🟡
+                            Инициализация...</p>
+                    </div>
+
+                </div>
+
+                <!-- 1. Выбор раздела -->
+                <div class="control-group">
+                    <label>Выберите раздел:</label>
+                    <div class="custom-dropdown" id="custom-parent-select">
+                        <div class="select-selected">
+                            <span id="selected-parent-text">Загрузка...</span>
+                            <div class="select-arrow"></div>
+                        </div>
+                        <div class="select-items select-hide" id="parent-options-container">
+                            <!-- JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Выбор категории -->
+                <div class="control-group">
+                    <label>Выберите категорию:</label>
+                    <div class="custom-dropdown" id="custom-child-select">
+                        <div class="select-selected disabled">
+                            <span id="selected-category-text">Выберите категорию</span>
+                            <div class="select-arrow"></div>
+                        </div>
+                        <div class="select-items select-hide">
+                            <input type="text" placeholder="Поиск..." id="category-search-input" autocomplete="off">
+                            <div id="category-options-container">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Настройки -->
+                <div class="control-group">
+                    <label for="results-count">Количество элементов:</label>
+                    <input type="number" id="results-count" class="custom-input" value="5" min="1">
+                </div>
+
+                <div class="control-group">
+                    <div class="label-wrapper">
+                        <label for="toponym-input">Топоним для замены:</label>
+                        <button id="info-btn" class="info-icon-btn" title="Показать подсказку">?</button>
+                    </div>
+                    <input type="text" id="toponym-input" class="custom-input" placeholder="например, владикавказ">
+                </div>
+
+                <!-- Кнопки -->
+                <div class="button-group">
+                    <button id="add-data-modal-btn" class="btn">➕ Добавить запись</button>
+                    <button id="randomize-btn" class="btn">Рандомизировать</button>
+                    <button id="copy-btn" class="btn">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Результат -->
+            <div id="result-container" class="result-container">
+                <h2>Результат:</h2>
+                <ul id="result-list"></ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer_container">
+        <p class="footer_copyright">&copy; 2026, Yatvig. Все права защищены.</p>
+    </footer>
+    </div>
+
+    <!-- Модальное окно: Добавление -->
+    <div id="add-data-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align: left;">
+            <button class="modal-close-btn" id="close-add-modal">&times;</button>
+            <h3>Добавить новый запрос</h3>
+
+            <div class="control-group">
+                <label>Раздел (Родитель):</label>
+                <input type="text" id="new-parent-input" class="custom-input" list="parent-list-hints"
+                    placeholder="Например: Кулинария" autocomplete="off">
+                <datalist id="parent-list-hints"></datalist>
+            </div>
+
+            <div class="control-group">
+                <label>Категория (Ребенок):</label>
+                <input type="text" id="new-child-input" class="custom-input" list="child-list-hints"
+                    placeholder="Например: Супы" autocomplete="off">
+                <datalist id="child-list-hints"></datalist>
+            </div>
+
+            <div class="control-group">
+                <label>Поисковый запрос:</label>
+                <input type="text" id="new-query-input" class="custom-input" placeholder="Например: как варить борщ">
+            </div>
+
+            <div class="control-group">
+                <label>Частотность:</label>
+                <input type="number" id="new-freq-input" class="custom-input" value="100">
+            </div>
+
+            <button class="btn" id="save-new-data-btn" style="width: 100%; margin-top: 10px;">Сохранить в
+                облако</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Инфо -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn modal-close-trigger">&times;</button>
+            <h3>Подсказка</h3>
+            <p>Введите топоним для замены "Москвы".</p>
+            <button class="btn modal-close-trigger">Понятно</button>
+        </div>
+    </div>
+
+    <!-- Скрипт -->
+    <script type="module">
+        // 1. ИМПОРТ ФУНКЦИЙ FIREBASE (Используем CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ==========================================
+        // 2. НАСТРОЙКИ (ВСТАВЬ СВОЙ КОД НИЖЕ)
+        // ==========================================
+
+        // Вставь сюда const firebaseConfig = { ... }, который ты скопировал с сайта Firebase
+        // Если ты потерял код, зайди в Project Settings -> General -> Your apps
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxEBDlOBK2QwduPO1S5ri9DpRBnoMhtt8",
+            authDomain: "yatvig-a0214.firebaseapp.com",
+            projectId: "yatvig-a0214",
+            storageBucket: "yatvig-a0214.firebasestorage.app",
+            messagingSenderId: "1049548595731",
+            appId: "1:1049548595731:web:7fc9ca611648fc31ead5e6"
+        };
+
+
+        // ==========================================
+        // 3. ИНИЦИАЛИЗАЦИЯ
+        // ==========================================
+
+        // Проверка на ошибку вставки конфига
+        if (!firebaseConfig.apiKey) {
+            alert("Ошибка! Вы не вставили firebaseConfig в код скрипта. Откройте файл в редакторе и добавьте ключи.");
+            throw new Error("Config missing");
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Имя коллекции в базе данных (папка, где лежат разделы)
+        const COLLECTION_NAME = "search_sections";
+
+        // Локальное хранилище данных (синхронизируется с облаком)
+        let globalData = {};
+
+        // --- Элементы интерфейса ---
+        const connectionStatus = document.getElementById('connection-status');
+
+        // Селекты
+        const parentSelect = document.getElementById('custom-parent-select');
+        const parentSelectedText = document.getElementById('selected-parent-text');
+        const parentOptionsContainer = document.getElementById('parent-options-container');
+
+        const childSelect = document.getElementById('custom-child-select');
+        const childSelectedText = document.getElementById('selected-category-text');
+        const childOptionsContainer = document.getElementById('category-options-container');
+        const searchInput = document.getElementById('category-search-input');
+
+        // Основные контролы
+        const resultsCountInput = document.getElementById('results-count');
+        const toponymInput = document.getElementById('toponym-input');
+        const randomizeBtn = document.getElementById('randomize-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const resultList = document.getElementById('result-list');
+
+        // Модалка добавления
+        const addModal = document.getElementById('add-data-modal');
+        const addBtn = document.getElementById('add-data-modal-btn');
+        const closeAddBtns = document.querySelectorAll('#close-add-modal');
+        const saveNewDataBtn = document.getElementById('save-new-data-btn');
+
+        const newParentInput = document.getElementById('new-parent-input');
+        const newChildInput = document.getElementById('new-child-input');
+        const newQueryInput = document.getElementById('new-query-input');
+        const newFreqInput = document.getElementById('new-freq-input');
+        const parentHints = document.getElementById('parent-list-hints');
+        const childHints = document.getElementById('child-list-hints');
+
+        // Состояние выбора
+        let currentParentValue = '';
+        let currentChildValue = '';
+        let currentListData = [];
+        const originalCopyBtnText = copyBtn.textContent;
+
+
+        // ==========================================
+        // 4. ПОДКЛЮЧЕНИЕ К БАЗЕ (REAL-TIME LISTENER)
+        // ==========================================
+
+        // Эта функция запускается сама и слушает изменения в базе
+        onSnapshot(collection(db, COLLECTION_NAME), (snapshot) => {
+            // Очищаем локальные данные перед обновлением
+            const newData = {};
+            let isEmpty = true;
+
+            snapshot.forEach((doc) => {
+                // doc.id = Название раздела (например, "Кулинария")
+                // doc.data() = Объект с категориями (например, { "Супы": [...] })
+                newData[doc.id] = doc.data();
+                isEmpty = false;
+            });
+
+            globalData = newData;
+
+            // Обновляем статус
+            connectionStatus.textContent = `🟢 Подключено. Разделов: ${Object.keys(globalData).length}`;
+            connectionStatus.style.color = 'green';
+
+            // Если база пустая, показываем кнопку заливки демо-данных
+            if (isEmpty) {
+                parentSelectedText.textContent = "База пуста";
+            } else {
+                // Если это первая загрузка или обновление, перерисовываем меню
+                refreshUI();
+            }
+        }, (error) => {
+            console.error("Ошибка Firebase:", error);
+            connectionStatus.textContent = `🔴 Ошибка: ${error.message}`;
+            connectionStatus.style.color = 'red';
+        });
+
+
+        // ==========================================
+        // 5. ЛОГИКА ИНТЕРФЕЙСА
+        // ==========================================
+
+        function refreshUI() {
+            renderParentOptions();
+            updateHints();
+
+            // Если выбранный ранее раздел еще существует, обновляем его содержимое
+            if (currentParentValue && globalData[currentParentValue]) {
+                renderChildOptions(currentParentValue);
+                // Если выбрана категория, пробуем обновить результат
+                if (currentChildValue && globalData[currentParentValue][currentChildValue]) {
+                    // Опционально: можно не делать авто-рандом, чтобы не сбивать пользователя
+                }
+            } else {
+                // Сброс, если раздел удалили
+                parentSelectedText.textContent = "Выберите раздел";
+                currentParentValue = '';
+            }
+        }
+
+        function updateHints() {
+            parentHints.innerHTML = '';
+            childHints.innerHTML = '';
+            Object.keys(globalData).forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                parentHints.appendChild(opt);
+            });
+        }
+
+        newParentInput.addEventListener('input', () => {
+            const val = newParentInput.value;
+            childHints.innerHTML = '';
+            if (globalData[val]) {
+                Object.keys(globalData[val]).forEach(childKey => {
+                    const opt = document.createElement('option');
+                    opt.value = childKey;
+                    childHints.appendChild(opt);
+                });
+            }
+        });
+
+        // --- Рендер списков ---
+
+        function renderParentOptions() {
+            parentOptionsContainer.innerHTML = '';
+            const parentKeys = Object.keys(globalData).sort();
+
+            if (parentKeys.length === 0) return;
+
+            parentKeys.forEach((key) => {
+                const div = document.createElement('div');
+                div.textContent = key;
+                div.className = 'option-item';
+                div.addEventListener('click', () => selectParent(key));
+                parentOptionsContainer.appendChild(div);
+            });
+        }
+
+        function selectParent(value, closeMenu = true) {
+            currentParentValue = value;
+            parentSelectedText.textContent = value;
+            if (closeMenu) toggleSelect(parentSelect, false);
+
+            renderChildOptions(value);
+
+            // Сброс ребенка
+            childSelectedText.textContent = "Выберите категорию";
+            currentChildValue = '';
+            childSelect.querySelector('.select-selected').classList.remove('disabled');
+        }
+
+        function renderChildOptions(parentKey) {
+            childOptionsContainer.innerHTML = '';
+            const subCategories = globalData[parentKey];
+
+            if (!subCategories) return;
+
+            const childKeys = Object.keys(subCategories).sort();
+
+            childKeys.forEach((key) => {
+                const div = document.createElement('div');
+                div.textContent = key;
+                div.className = 'option-item';
+                div.addEventListener('click', () => selectChild(key));
+                childOptionsContainer.appendChild(div);
+            });
+        }
+
+        function selectChild(value, closeMenu = true) {
+            currentChildValue = value;
+            childSelectedText.textContent = value;
+            if (closeMenu) toggleSelect(childSelect, false);
+            searchInput.value = '';
+            filterOptions('');
+            handleRandomize();
+        }
+
+        // --- Управление выпадашками ---
+        function toggleSelect(selectElement, forceState) {
+            const items = selectElement.querySelector('.select-items');
+            const selectedDiv = selectElement.querySelector('.select-selected');
+
+            // Если открываем этот, закрываем другие
+            if (!items.classList.contains('select-hide') === false && forceState !== false) {
+                closeAllSelects(selectElement);
+            }
+
+            if (forceState !== undefined) {
+                if (forceState) {
+                    items.classList.remove('select-hide');
+                    selectedDiv.classList.add('select-arrow-active');
+                } else {
+                    items.classList.add('select-hide');
+                    selectedDiv.classList.remove('select-arrow-active');
+                }
+            } else {
+                items.classList.toggle('select-hide');
+                selectedDiv.classList.toggle('select-arrow-active');
+            }
+        }
+
+        function closeAllSelects(exceptElement) {
+            [parentSelect, childSelect].forEach(sel => {
+                if (sel !== exceptElement) {
+                    sel.querySelector('.select-items').classList.add('select-hide');
+                    sel.querySelector('.select-selected').classList.remove('select-arrow-active');
+                }
+            });
+        }
+
+        parentSelect.querySelector('.select-selected').addEventListener('click', (e) => { e.stopPropagation(); toggleSelect(parentSelect); });
+        childSelect.querySelector('.select-selected').addEventListener('click', (e) => {
+            if (currentParentValue) {
+                e.stopPropagation();
+                toggleSelect(childSelect);
+                if (!childSelect.querySelector('.select-items').classList.contains('select-hide')) searchInput.focus();
+            }
+        });
+        document.addEventListener('click', () => closeAllSelects(null));
+        searchInput.addEventListener('click', (e) => e.stopPropagation());
+        searchInput.addEventListener('input', (e) => filterOptions(e.target.value));
+
+        function filterOptions(text) {
+            const filter = text.toLowerCase();
+            const options = childOptionsContainer.getElementsByClassName('option-item');
+            for (let div of options) {
+                div.style.display = (div.textContent || div.innerText).toLowerCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+
+        // ==========================================
+        // 6. РАНДОМАЙЗЕР (ЛОГИКА)
+        // ==========================================
+
+        function handleRandomize() {
+            const resultsCount = parseInt(resultsCountInput.value, 10);
+            const toponym = toponymInput.value.trim();
+
+            if (currentParentValue && currentChildValue &&
+                globalData[currentParentValue] && globalData[currentParentValue][currentChildValue]) {
+
+                const data = globalData[currentParentValue][currentChildValue];
+                let randomized = [...data].sort(() => 0.5 - Math.random()).slice(0, resultsCount);
+
+                if (toponym) {
+                    const targets = ["москва", "москве", "москвы"];
+                    randomized = randomized.map(item => {
+                        let q = item.query;
+                        targets.forEach(t => {
+                            const regex = new RegExp(`(^|[\\s])(${t})(?=$|[\\s.,!?])`, 'gi');
+                            q = q.replace(regex, `$1${toponym}`);
+                        });
+                        return { ...item, query: q };
+                    });
+                }
+                displayResults(randomized);
+            } else {
+                displayResults([]);
+            }
+        }
+
+        function displayResults(list) {
+            resultList.innerHTML = '';
+            currentListData = [];
+            if (!list || list.length === 0) {
+                resultList.innerHTML = '<li>Нет данных.</li>';
+                copyBtn.disabled = true;
+                return;
+            }
+            list.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${item.query}</span><span class="frequency-span">Частотность: ${item.frequency}</span>`;
+                resultList.appendChild(li);
+                currentListData.push(item.query);
+            });
+            copyBtn.disabled = false;
+        }
+
+        randomizeBtn.addEventListener('click', handleRandomize);
+        copyBtn.addEventListener('click', () => {
+            if (copyBtn.disabled || currentListData.length === 0) return;
+            navigator.clipboard.writeText(currentListData.join('\n')).then(() => {
+                const t = copyBtn.textContent;
+                copyBtn.textContent = 'Скопировано!';
+                copyBtn.disabled = true;
+                setTimeout(() => { copyBtn.textContent = t; copyBtn.disabled = false; }, 2000);
+            });
+        });
+
+
+        // ==========================================
+        // 7. ДОБАВЛЕНИЕ ДАННЫХ В ОБЛАКО
+        // ==========================================
+
+        addBtn.addEventListener('click', () => {
+            addModal.classList.add('active');
+            updateHints(); // Обновляем подсказки перед открытием
+        });
+
+        closeAddBtns.forEach(b => b.addEventListener('click', () => addModal.classList.remove('active')));
+
+        saveNewDataBtn.addEventListener('click', async () => {
+            const p = newParentInput.value.trim();
+            const c = newChildInput.value.trim();
+            const q = newQueryInput.value.trim();
+            const f = parseInt(newFreqInput.value, 10);
+
+            if (!p || !c || !q) { alert('Заполните все поля!'); return; }
+
+            // Блокируем кнопку на время сохранения
+            const originalBtnText = saveNewDataBtn.textContent;
+            saveNewDataBtn.textContent = "Сохранение...";
+            saveNewDataBtn.disabled = true;
+
+            try {
+                // 1. Получаем ссылку на документ Раздела (например, "Кулинария")
+                const sectionRef = doc(db, COLLECTION_NAME, p);
+
+                // 2. Получаем текущие данные этого раздела
+                const docSnap = await getDoc(sectionRef);
+
+                let currentSectionData = {};
+                if (docSnap.exists()) {
+                    currentSectionData = docSnap.data();
+                }
+
+                // 3. Создаем/обновляем категорию
+                if (!currentSectionData[c]) {
+                    currentSectionData[c] = [];
+                }
+
+                // Проверка на дубликат
+                const exists = currentSectionData[c].some(item => item.query === q);
+                if (exists) {
+                    alert("Такой запрос уже есть в базе!");
+                    saveNewDataBtn.textContent = originalBtnText;
+                    saveNewDataBtn.disabled = false;
+                    return;
+                }
+
+                // Добавляем
+                currentSectionData[c].push({ query: q, frequency: f || 0 });
+
+                // 4. Записываем обратно в Firebase
+                // setDoc с merge: true создаст документ если его нет, или обновит если есть
+                await setDoc(sectionRef, currentSectionData, { merge: true });
+
+                // Успех
+                newQueryInput.value = ''; // Чистим поле ввода
+                alert(`✅ Запрос "${q}" сохранен в облако!`);
+
+                // Восстанавливаем кнопку
+                saveNewDataBtn.textContent = originalBtnText;
+                saveNewDataBtn.disabled = false;
+
+                // Переключаем селекты на то, что добавили (чтобы пользователь видел)
+                currentParentValue = p;
+                currentChildValue = c;
+                // Так как onSnapshot сработает автоматически, UI обновится сам, 
+                // нам нужно только подождать чуть-чуть или вручную выбрать в меню после обновления
+
+            } catch (e) {
+                console.error("Ошибка сохранения:", e);
+                alert("Ошибка при сохранении: " + e.message);
+                saveNewDataBtn.textContent = originalBtnText;
+                saveNewDataBtn.disabled = false;
+            }
+        });
+
+
+
+
+
+        // Модалка инфо
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        if (infoBtn) infoBtn.addEventListener('click', () => infoModal.classList.add('active'));
+        document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', () => infoModal.classList.remove('active')));
+
+    </script>
+</body>
+
+</html>
