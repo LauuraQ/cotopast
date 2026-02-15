@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ru">
 
 <head>
@@ -8,7 +7,6 @@
     <style>
         @charset "UTF-8";
 
-        /* --- 1. ПЕРЕМЕННЫЕ И БАЗОВЫЕ НАСТРОЙКИ --- */
         :root {
             --color-light-gray: #A6A6A6;
             --color-gray: #4A4A4A;
@@ -35,6 +33,11 @@
             width: 100%;
             font-family: var(--font-sans);
             color: var(--color-gray);
+
+            ::selection {
+                background-color: var(--color-light-gray);
+                color: var(--color-white);
+            }
         }
 
         input,
@@ -52,7 +55,10 @@
             list-style: none;
         }
 
-        /* --- 2. ТИПОГРАФИКА --- */
+        a {
+            color: var(--color-dark-gray);
+        }
+
         h1 {
             font-size: 2.6rem;
             font-weight: bold;
@@ -64,7 +70,7 @@
         h2 {
             font-weight: bold;
             color: var(--color-gray);
-            margin-top: 70px;
+            margin-top: 20px;
             margin-bottom: 25px;
             text-align: center;
         }
@@ -72,16 +78,19 @@
         .intro {
             text-align: center;
             max-width: 800px;
-            margin: 0 auto 48px;
+            margin: 0 auto 25px;
         }
 
-        .centration {
-            max-width: 800px;
+        .centration-modif {
+            max-width: 1300px;
             margin: 0 auto 56px;
             padding: 0 8px;
+
+            .p {
+                max-width: 800px;
+            }
         }
 
-        /* --- 3. ЛЕЙАУТ --- */
         .wrapper {
             max-width: 1140px;
             margin: 0 auto;
@@ -108,17 +117,16 @@
             color: var(--color-light-gray);
         }
 
-        /* --- 4. ПАНЕЛЬ УПРАВЛЕНИЯ --- */
         .controls-container {
-            max-width: 800px;
-            margin: 48px auto;
+            max-width: 600px;
+            width: 100%;
+            margin: 25px auto;
             padding: 24px;
             border: 1px solid var(--color-light-gray);
             background-color: var(--color-background-gray);
             border-radius: 8px;
         }
 
-        /* Статус Firebase */
         .firebase-status {
             margin-bottom: 20px;
             padding: 15px;
@@ -150,7 +158,9 @@
         }
 
         .custom-input {
+            max-width: 552px;
             width: 100%;
+            resize: vertical;
             padding: 10px;
             border: 1px solid var(--color-light-gray);
             font-size: 1rem;
@@ -164,7 +174,6 @@
             outline: none;
         }
 
-        /* --- 5. КАСТОМНЫЕ СЕЛЕКТЫ --- */
         .custom-dropdown {
             position: relative;
             width: 100%;
@@ -243,8 +252,8 @@
             background-color: var(--color-background-gray);
         }
 
-        /* --- 6. КНОПКИ --- */
         .button-group {
+            max-width: 600px;
             display: flex;
             gap: 15px;
             margin-top: 20px;
@@ -272,9 +281,17 @@
             opacity: 0.5;
         }
 
-        /* --- 7. РЕЗУЛЬТАТЫ --- */
         .result-container {
-            margin-top: 48px;
+            margin-top: 20px;
+
+            ul {
+                border: 1px solid var(--color-light-gray);
+                border-radius: 4px;
+            }
+
+            :empty {
+                border: none;
+            }
         }
 
         #result-list li {
@@ -283,14 +300,6 @@
             align-items: center;
             background-color: #fff;
             padding: 12px 15px;
-            border-bottom: 1px solid var(--color-background-gray);
-        }
-
-        #result-list li::before {
-            content: "—";
-            margin-right: 10px;
-            color: var(--color-light-gray);
-            font-weight: bold;
         }
 
         .frequency-span {
@@ -299,7 +308,6 @@
             font-size: 0.9rem;
         }
 
-        /* --- 8. МОДАЛЬНЫЕ ОКНА --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -325,6 +333,10 @@
             width: 90%;
             position: relative;
             animation: slideDown 0.3s ease;
+
+            p {
+                margin: 25px 0;
+            }
         }
 
         .modal-close-btn {
@@ -366,6 +378,28 @@
             margin-bottom: 0;
         }
 
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #cbcbcb;
+            border-radius: 0;
+            outline: none;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        input[type="radio"]:checked {
+            background-color: var(--color-gray);
+            border-color: var(--color-gray);
+        }
+
+        input[type="radio"]:hover {
+            border-color: var(--color-gray);
+        }
+
         @keyframes slideDown {
             from {
                 transform: translateY(-30px);
@@ -381,156 +415,187 @@
 </head>
 
 <body>
-
     <main>
-        <h1>Рандомайзер списков</h1>
-
-        <div class="centration">
+        <h1>Котопаст</h1>
+        <div class="centration-modif">
             <div class="tool-description">
                 <p class="intro">Этот инструмент позволяет генерировать случайные списки поисковых запросов из различных
-                    категорий, по которым нам необходимо откликаться.</p>
+                    категорий, по которым нам необходимо откликаться, а также генерировать на основе полученных списков
+                    стурктуры. </p>
                 <p class="intro">Инструмент не делает всю работу за вас, а лишь ускоряет там, где уже была собрана БД
-                    запросов. Там, где их нет - вы должны собирать их самостоятельно. Вы так же можете дополнять БД
+                    запросов.<br> Там, где их нет - вы должны собирать их самостоятельно. <br>Вы так же можете дополнять
+                    БД
                     запросов, для облегчения своей работы и работы коллег в будущем.</p>
             </div>
-
-            <div class="controls-container">
-
-                <!-- Блок статуса Firebase -->
-                <div class="firebase-status">
-                    <div>
-                        <h3 style="margin: 0 0 5px 0; color: var(--color-dark-gray);">Облачная
-                            база данных</h3>
-                        <p id="connection-status" style="margin: 0; font-size: 0.9rem; color: #555;">🟡
-                            Инициализация...</p>
-                    </div>
-
-                </div>
-
-                <!-- 1. Выбор раздела -->
-                <div class="control-group">
-                    <label>Выберите раздел:</label>
-                    <div class="custom-dropdown" id="custom-parent-select">
-                        <div class="select-selected">
-                            <span id="selected-parent-text">Загрузка...</span>
-                            <div class="select-arrow"></div>
-                        </div>
-                        <div class="select-items select-hide" id="parent-options-container">
-                            <!-- JS -->
+            <div style="display: flex;">
+                <div class="controls-container">
+                    <div class="firebase-status">
+                        <div>
+                            <h3 style="margin: 0 0 5px 0; color: var(--color-dark-gray);">Облачная
+                                база данных</h3>
+                            <p id="connection-status" style="margin: 0px; font-size: 0.9rem; color: green;">🟢
+                                Подключено.
+                                Разделов: 6</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- 2. Выбор категории -->
-                <div class="control-group">
-                    <label>Выберите категорию:</label>
-                    <div class="custom-dropdown" id="custom-child-select">
-                        <div class="select-selected disabled">
-                            <span id="selected-category-text">Выберите категорию</span>
-                            <div class="select-arrow"></div>
-                        </div>
-                        <div class="select-items select-hide">
-                            <input type="text" placeholder="Поиск..." id="category-search-input" autocomplete="off">
-                            <div id="category-options-container">
-                                <!-- JS -->
+                    <div class="control-group">
+                        <label>Выберите категорию:</label>
+                        <div class="custom-dropdown" id="custom-parent-select">
+                            <div class="select-selected">
+                                <span id="selected-parent-text">Выберите категорию</span>
+                                <div class="select-arrow"></div>
+                            </div>
+                            <div class="select-items select-hide" id="parent-options-container">
+                                <div class="option-item">Алкоголизм</div>
+                                <div class="option-item">Кодирование</div>
+                                <div class="option-item">Наркомания</div>
+                                <div class="option-item">Психиатрия</div>
+                                <div class="option-item">Реабилитация</div>
+                                <div class="option-item">Статьи - ИНФО</div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- 3. Настройки -->
-                <div class="control-group">
-                    <label for="results-count">Количество элементов:</label>
-                    <input type="number" id="results-count" class="custom-input" value="5" min="1">
-                </div>
-
-                <div class="control-group">
-                    <div class="label-wrapper">
-                        <label for="toponym-input">Топоним для замены:</label>
-                        <button id="info-btn" class="info-icon-btn" title="Показать подсказку">?</button>
+                    <div class="control-group">
+                        <label>Выберите раздел:</label>
+                        <div class="custom-dropdown" id="custom-child-select">
+                            <div class="select-selected disabled">
+                                <span id="selected-category-text">Выберите раздел</span>
+                                <div class="select-arrow"></div>
+                            </div>
+                            <div class="select-items select-hide">
+                                <input type="text" placeholder="Поиск..." id="category-search-input" autocomplete="off">
+                                <div id="category-options-container">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <input type="text" id="toponym-input" class="custom-input" placeholder="например, владикавказ">
+                    <div class="control-group">
+                        <label for="results-count">Количество элементов:</label>
+                        <input type="number" id="results-count" class="custom-input" value="5" min="1">
+                    </div>
+                    <div class="control-group">
+                        <div class="label-wrapper">
+                            <label for="toponym-input">Топоним для замены:</label>
+                            <button class="info-icon-btn" data-info="toponim" title="Показать подсказку">?</button>
+                        </div>
+                        <input type="text" id="toponym-input" class="custom-input" placeholder="например, владикавказ">
+                    </div>
+                    <div class="button-group">
+                        <button id="add-data-modal-btn" class="btn">➕ Добавить запись</button>
+                        <button id="randomize-btn" class="btn">Рандомизировать</button>
+                        <button id="copy-btn" class="btn">Копировать</button>
+                    </div>
+                    <div id="result-container" class="result-container">
+                        <ul id="result-list"></ul>
+                    </div>
                 </div>
+                <div class="controls-container">
+                    <div class="control-group">
+                        <div class="label-wrapper">
+                            <label for="github-token">Токен GitHub (Personal Access Token):</label>
+                            <button class="info-icon-btn" data-info="token" title="Показать подсказку">?</button>
+                        </div>
+                        <input type="password" id="github-token" class="custom-input" placeholder="ghp_...">
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                            Токен нужен для доступа к GitHub Models.
+                            <a href="https://github.com/settings/tokens" target="_blank">Создать токен</a>.
+                        </p>
+                    </div>
+                    <div class="control-group">
+                        <div class="label-wrapper">
+                            <label>Тип контента:</label>
+                            <button class="info-icon-btn" data-info="content" title="Показать подсказку">?</button>
+                        </div>
 
-                <!-- Кнопки -->
-                <div class="button-group">
-                    <button id="add-data-modal-btn" class="btn">➕ Добавить запись</button>
-                    <button id="randomize-btn" class="btn">Рандомизировать</button>
-                    <button id="copy-btn" class="btn">Копировать</button>
+                        <div style="display: flex; gap: 20px;">
+                            <label><input type="radio" name="content-type" value="service" checked> Услуга</label>
+                            <label><input type="radio" name="content-type" value="article"> Статья</label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="label-wrapper">
+                            <label for="prompt-template">Шаблон промпта:</label>
+                            <button class="info-icon-btn" data-info="maket" title="Показать подсказку">?</button>
+                        </div>
+                        <textarea id="prompt-template" class="custom-input" rows="8"></textarea>
+                    </div>
+                    <div class="custom-dropdown" id="custom-model-select">
+                        <div class="select-selected">
+                            <span id="selected-model-text">gpt-4o</span>
+                            <div class="select-arrow"></div>
+                        </div>
+                        <div class="select-items select-hide" id="model-options-container">
+                            <div class="option-item" data-value="gpt-4o">gpt-4o</div>
+                            <div class="option-item" data-value="gpt-4o-mini">gpt-4o-mini</div>
+                            <div class="option-item" data-value="Llama-3.3-70B">Llama-3.3-70B</div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="model" id="model-input" value="gpt-4o">
+                    <div class="button-group" style="justify-content: space-between;">
+                        <div
+                            style="margin-bottom: 15px; padding: 10px; background: #fff; border-radius: 4px; border: 1px solid var(--color-light-gray);">
+                            <span id="rate-limit-display">Сегодня использовано: -- из --</span>
+                        </div>
+                        <button id="generate-structure-btn" class="btn">Сгенерировать структуру</button>
+                    </div>
+                    <div id="structure-result"
+                        style="margin-top: 20px; padding: 15px; background: #fff; border-radius: 4px; white-space: pre-wrap; display: none; border: 1px solid var(--color-light-gray);">
+                    </div>
                 </div>
-            </div>
-
-            <!-- Результат -->
-            <div id="result-container" class="result-container">
-                <h2>Результат:</h2>
-                <ul id="result-list"></ul>
             </div>
         </div>
+        </div>
     </main>
-
     <footer class="footer_container">
-        <p class="footer_copyright">&copy; 2026, Yatvig. Все права защищены.</p>
+        <p class="footer_copyright">© 2026, Yatvig. Все права защищены.</p>
     </footer>
-    </div>
-
-    <!-- Модальное окно: Добавление -->
     <div id="add-data-modal" class="modal-overlay">
         <div class="modal-content" style="text-align: left;">
-            <button class="modal-close-btn" id="close-add-modal">&times;</button>
+            <button class="modal-close-btn" id="close-add-modal">×</button>
             <h3>Добавить новый запрос</h3>
-
             <div class="control-group">
-                <label>Раздел (Родитель):</label>
+                <label>Категория:</label>
                 <input type="text" id="new-parent-input" class="custom-input" list="parent-list-hints"
-                    placeholder="Например: Кулинария" autocomplete="off">
-                <datalist id="parent-list-hints"></datalist>
+                    placeholder="Например: Алкоголизм" autocomplete="off">
+                <datalist id="parent-list-hints">
+                    <option value="Алкоголизм"></option>
+                    <option value="Кодирование"></option>
+                    <option value="Наркомания"></option>
+                    <option value="Психиатрия"></option>
+                    <option value="Реабилитация"></option>
+                    <option value="Статьи - ИНФО"></option>
+                </datalist>
             </div>
-
             <div class="control-group">
-                <label>Категория (Ребенок):</label>
+                <label>Раздел:</label>
                 <input type="text" id="new-child-input" class="custom-input" list="child-list-hints"
-                    placeholder="Например: Супы" autocomplete="off">
+                    placeholder="Например: Вывод из запоя" autocomplete="off">
                 <datalist id="child-list-hints"></datalist>
             </div>
-
             <div class="control-group">
                 <label>Поисковый запрос:</label>
-                <input type="text" id="new-query-input" class="custom-input" placeholder="Например: как варить борщ">
+                <input type="text" id="new-query-input" class="custom-input"
+                    placeholder="Например: вывод из запоя москва">
             </div>
-
             <div class="control-group">
                 <label>Частотность:</label>
                 <input type="number" id="new-freq-input" class="custom-input" value="100">
             </div>
-
             <button class="btn" id="save-new-data-btn" style="width: 100%; margin-top: 10px;">Сохранить в
                 облако</button>
         </div>
     </div>
-
-    <!-- Модальное окно: Инфо -->
     <div id="info-modal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close-btn modal-close-trigger">&times;</button>
+            <button class="modal-close-btn modal-close-trigger">×</button>
             <h3>Подсказка</h3>
-            <p>Введите топоним для замены "Москвы".</p>
+            <p id="info-modal-text"></p>
             <button class="btn modal-close-trigger">Понятно</button>
         </div>
     </div>
-
-    <!-- Скрипт -->
     <script type="module">
-        // 1. ИМПОРТ ФУНКЦИЙ FIREBASE (Используем CDN)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // ==========================================
-        // 2. НАСТРОЙКИ (ВСТАВЬ СВОЙ КОД НИЖЕ)
-        // ==========================================
-
-        // Вставь сюда const firebaseConfig = { ... }, который ты скопировал с сайта Firebase
-        // Если ты потерял код, зайди в Project Settings -> General -> Your apps
-
         const firebaseConfig = {
             apiKey: "AIzaSyCxEBDlOBK2QwduPO1S5ri9DpRBnoMhtt8",
             authDomain: "yatvig-a0214.firebaseapp.com",
@@ -539,74 +604,50 @@
             messagingSenderId: "1049548595731",
             appId: "1:1049548595731:web:7fc9ca611648fc31ead5e6"
         };
-
-
-        // ==========================================
-        // 3. ИНИЦИАЛИЗАЦИЯ
-        // ==========================================
-
-        // Проверка на ошибку вставки конфига
         if (!firebaseConfig.apiKey) {
-            alert("Ошибка! Вы не вставили firebaseConfig в код скрипта. Откройте файл в редакторе и добавьте ключи.");
+            showModal('Ошибка конфигурации', 'Вы не вставили firebaseConfig в код скрипта. Откройте файл в редакторе и добавьте ключи.');
             throw new Error("Config missing");
         }
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        // Имя коллекции в базе данных (папка, где лежат разделы)
         const COLLECTION_NAME = "search_sections";
-
-        // Локальное хранилище данных (синхронизируется с облаком)
         let globalData = {};
-
-        // --- Элементы интерфейса ---
         const connectionStatus = document.getElementById('connection-status');
-
-        // Селекты
         const parentSelect = document.getElementById('custom-parent-select');
         const parentSelectedText = document.getElementById('selected-parent-text');
         const parentOptionsContainer = document.getElementById('parent-options-container');
-
         const childSelect = document.getElementById('custom-child-select');
         const childSelectedText = document.getElementById('selected-category-text');
         const childOptionsContainer = document.getElementById('category-options-container');
         const searchInput = document.getElementById('category-search-input');
-
-        // Основные контролы
         const resultsCountInput = document.getElementById('results-count');
         const toponymInput = document.getElementById('toponym-input');
         const randomizeBtn = document.getElementById('randomize-btn');
         const copyBtn = document.getElementById('copy-btn');
         const resultList = document.getElementById('result-list');
-
-        // Модалка добавления
         const addModal = document.getElementById('add-data-modal');
         const addBtn = document.getElementById('add-data-modal-btn');
         const closeAddBtns = document.querySelectorAll('#close-add-modal');
         const saveNewDataBtn = document.getElementById('save-new-data-btn');
-
         const newParentInput = document.getElementById('new-parent-input');
         const newChildInput = document.getElementById('new-child-input');
         const newQueryInput = document.getElementById('new-query-input');
         const newFreqInput = document.getElementById('new-freq-input');
         const parentHints = document.getElementById('parent-list-hints');
         const childHints = document.getElementById('child-list-hints');
-
-        // Состояние выбора
         let currentParentValue = '';
         let currentChildValue = '';
         let currentListData = [];
         const originalCopyBtnText = copyBtn.textContent;
-
-
-        // ==========================================
-        // 4. ПОДКЛЮЧЕНИЕ К БАЗЕ (REAL-TIME LISTENER)
-        // ==========================================
-
-        // Эта функция запускается сама и слушает изменения в базе
+        function showModal(title, message) {
+            const modal = document.getElementById('info-modal');
+            const modalTitle = modal.querySelector('h3');
+            const modalText = document.getElementById('info-modal-text');
+            if (modalTitle) modalTitle.textContent = title;
+            if (modalText) modalText.textContent = message;
+            modal.classList.add('active');
+        }
         onSnapshot(collection(db, COLLECTION_NAME), (snapshot) => {
-            // Очищаем локальные данные перед обновлением
             const newData = {};
             let isEmpty = true;
 
@@ -618,16 +659,11 @@
             });
 
             globalData = newData;
-
-            // Обновляем статус
             connectionStatus.textContent = `🟢 Подключено. Разделов: ${Object.keys(globalData).length}`;
             connectionStatus.style.color = 'green';
-
-            // Если база пустая, показываем кнопку заливки демо-данных
             if (isEmpty) {
                 parentSelectedText.textContent = "База пуста";
             } else {
-                // Если это первая загрузка или обновление, перерисовываем меню
                 refreshUI();
             }
         }, (error) => {
@@ -635,17 +671,9 @@
             connectionStatus.textContent = `🔴 Ошибка: ${error.message}`;
             connectionStatus.style.color = 'red';
         });
-
-
-        // ==========================================
-        // 5. ЛОГИКА ИНТЕРФЕЙСА
-        // ==========================================
-
         function refreshUI() {
             renderParentOptions();
             updateHints();
-
-            // Если выбранный ранее раздел еще существует, обновляем его содержимое
             if (currentParentValue && globalData[currentParentValue]) {
                 renderChildOptions(currentParentValue);
                 // Если выбрана категория, пробуем обновить результат
@@ -653,12 +681,11 @@
                     // Опционально: можно не делать авто-рандом, чтобы не сбивать пользователя
                 }
             } else {
-                // Сброс, если раздел удалили
-                parentSelectedText.textContent = "Выберите раздел";
+                // Сброс, если категорию удалили
+                parentSelectedText.textContent = "Выберите категорию";
                 currentParentValue = '';
             }
         }
-
         function updateHints() {
             parentHints.innerHTML = '';
             childHints.innerHTML = '';
@@ -668,7 +695,6 @@
                 parentHints.appendChild(opt);
             });
         }
-
         newParentInput.addEventListener('input', () => {
             const val = newParentInput.value;
             childHints.innerHTML = '';
@@ -680,9 +706,6 @@
                 });
             }
         });
-
-        // --- Рендер списков ---
-
         function renderParentOptions() {
             parentOptionsContainer.innerHTML = '';
             const parentKeys = Object.keys(globalData).sort();
@@ -697,28 +720,21 @@
                 parentOptionsContainer.appendChild(div);
             });
         }
-
         function selectParent(value, closeMenu = true) {
             currentParentValue = value;
             parentSelectedText.textContent = value;
             if (closeMenu) toggleSelect(parentSelect, false);
-
             renderChildOptions(value);
-
             // Сброс ребенка
             childSelectedText.textContent = "Выберите категорию";
             currentChildValue = '';
             childSelect.querySelector('.select-selected').classList.remove('disabled');
         }
-
         function renderChildOptions(parentKey) {
             childOptionsContainer.innerHTML = '';
             const subCategories = globalData[parentKey];
-
             if (!subCategories) return;
-
             const childKeys = Object.keys(subCategories).sort();
-
             childKeys.forEach((key) => {
                 const div = document.createElement('div');
                 div.textContent = key;
@@ -727,7 +743,6 @@
                 childOptionsContainer.appendChild(div);
             });
         }
-
         function selectChild(value, closeMenu = true) {
             currentChildValue = value;
             childSelectedText.textContent = value;
@@ -736,17 +751,12 @@
             filterOptions('');
             handleRandomize();
         }
-
-        // --- Управление выпадашками ---
         function toggleSelect(selectElement, forceState) {
             const items = selectElement.querySelector('.select-items');
             const selectedDiv = selectElement.querySelector('.select-selected');
-
-            // Если открываем этот, закрываем другие
             if (!items.classList.contains('select-hide') === false && forceState !== false) {
                 closeAllSelects(selectElement);
             }
-
             if (forceState !== undefined) {
                 if (forceState) {
                     items.classList.remove('select-hide');
@@ -760,7 +770,6 @@
                 selectedDiv.classList.toggle('select-arrow-active');
             }
         }
-
         function closeAllSelects(exceptElement) {
             [parentSelect, childSelect].forEach(sel => {
                 if (sel !== exceptElement) {
@@ -769,7 +778,6 @@
                 }
             });
         }
-
         parentSelect.querySelector('.select-selected').addEventListener('click', (e) => { e.stopPropagation(); toggleSelect(parentSelect); });
         childSelect.querySelector('.select-selected').addEventListener('click', (e) => {
             if (currentParentValue) {
@@ -781,7 +789,6 @@
         document.addEventListener('click', () => closeAllSelects(null));
         searchInput.addEventListener('click', (e) => e.stopPropagation());
         searchInput.addEventListener('input', (e) => filterOptions(e.target.value));
-
         function filterOptions(text) {
             const filter = text.toLowerCase();
             const options = childOptionsContainer.getElementsByClassName('option-item');
@@ -789,22 +796,13 @@
                 div.style.display = (div.textContent || div.innerText).toLowerCase().indexOf(filter) > -1 ? "" : "none";
             }
         }
-
-
-        // ==========================================
-        // 6. РАНДОМАЙЗЕР (ЛОГИКА)
-        // ==========================================
-
         function handleRandomize() {
             const resultsCount = parseInt(resultsCountInput.value, 10);
             const toponym = toponymInput.value.trim();
-
             if (currentParentValue && currentChildValue &&
                 globalData[currentParentValue] && globalData[currentParentValue][currentChildValue]) {
-
                 const data = globalData[currentParentValue][currentChildValue];
                 let randomized = [...data].sort(() => 0.5 - Math.random()).slice(0, resultsCount);
-
                 if (toponym) {
                     const targets = ["москва", "москве", "москвы"];
                     randomized = randomized.map(item => {
@@ -821,7 +819,6 @@
                 displayResults([]);
             }
         }
-
         function displayResults(list) {
             resultList.innerHTML = '';
             currentListData = [];
@@ -832,13 +829,12 @@
             }
             list.forEach(item => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span>${item.query}</span><span class="frequency-span">Частотность: ${item.frequency}</span>`;
+                li.innerHTML = `<span>${item.query}</span><span class="frequency-span">Частотность: </br> ${item.frequency}</span>`;
                 resultList.appendChild(li);
                 currentListData.push(item.query);
             });
             copyBtn.disabled = false;
         }
-
         randomizeBtn.addEventListener('click', handleRandomize);
         copyBtn.addEventListener('click', () => {
             if (copyBtn.disabled || currentListData.length === 0) return;
@@ -849,97 +845,289 @@
                 setTimeout(() => { copyBtn.textContent = t; copyBtn.disabled = false; }, 2000);
             });
         });
+        const generateBtn = document.getElementById('generate-structure-btn');
+        const structureResult = document.getElementById('structure-result');
+        const tokenInput = document.getElementById('github-token');
+        const promptTemplate = document.getElementById('prompt-template');
+        const modelInput = document.getElementById('model-input');
+        const rateLimitDisplay = document.getElementById('rate-limit-display');
+        const typeRadios = document.querySelectorAll('input[name="content-type"]');
+        const serviceTemplate = `Нужно составить содержание текста для сайта частной наркоклиники. Для этого требуется ориентироваться на ключевые слова в названиях заголовков и подзаголовков. 
+Нужно придумать уникальное и интересное содержание, чтобы по итогу аудитории сайта было действительно интересно читать текст, но не перегибать с креативностью. Н3 не требуется.
+Желательно видеть такие заголовки как (стадии болезни, этапы лечения, плюсы и минусы, методы, когда нужно, что такое, кому подходит и т.д. (старайся придумать аналогичные заголовки, а не втупую использовать эти в том же порядке)) 
+Не делай заголовки слишком длинными (до 11 слов)
+
+Тип текста: Услуга (коммерческая)
+
+Кол-во заголовков Н2 должно быть 16 шт, без учета H1.
+
+Название: “{{title}}”
+
+Keywords: “{{keys}}”
+
+Ответ пиши без маркировок, табуляций и прочих символов, кроме тире, вот пример  и стиль написания:
+
+H2 - * заголовок *
+H2 - * заголовок *
+H2 - * заголовок *`;
+
+        const articleTemplate = `Нужно составить содержание текста для сайта частной наркоклиники. Для этого требуется ориентироваться на ключевые слова в названиях заголовков и подзаголовков. 
+Нужно придумать уникальное и интересное содержание, чтобы по итогу аудитории сайта было действительно интересно читать текст, но не перегибать с креативностью. Н3 не требуется.
+Желательно видеть такие заголовки как (стадии болезни, этапы лечения, плюсы и минусы, методы, когда нужно, что такое, кому подходит и т.д.) 
+
+Тип текста: Статья (информационная)
+
+Кол-во заголовков Н2 должно быть 16 шт, без учета H1.
+
+Название: “{{title}}”
+
+Keywords: “{{keys}}”
 
 
-        // ==========================================
-        // 7. ДОБАВЛЕНИЕ ДАННЫХ В ОБЛАКО
-        // ==========================================
+Ответ пиши без маркировок, табуляций и прочих символов, кроме тире, вот пример  и стиль написания:
 
+H2 - *какой-то заголовок*
+H2 - *какой-то заголовок*`;
+
+        const STORAGE_KEY_SERVICE = 'saved_prompt_service';
+        const STORAGE_KEY_ARTICLE = 'saved_prompt_article';
+
+        function loadPromptForType(type) {
+            const key = type === 'service' ? STORAGE_KEY_SERVICE : STORAGE_KEY_ARTICLE;
+            const saved = localStorage.getItem(key);
+            const defaultValue = type === 'service' ? serviceTemplate : articleTemplate;
+            if (saved && saved.trim() !== '') {
+                promptTemplate.value = saved;
+            } else {
+                promptTemplate.value = defaultValue;
+            }
+        }
+        function savePromptForCurrentType() {
+            const currentType = document.querySelector('input[name="content-type"]:checked').value;
+            const key = currentType === 'service' ? STORAGE_KEY_SERVICE : STORAGE_KEY_ARTICLE;
+            const value = promptTemplate.value;
+            localStorage.setItem(key, value);
+        }
+        loadPromptForType('service');
+        typeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                loadPromptForType(e.target.value);
+            });
+        });
+        promptTemplate.addEventListener('input', savePromptForCurrentType);
+        const DAILY_LIMIT = 150; // стандартный лимит GitHub Models
+        function getTodayKey() {
+            const now = new Date();
+            return `usage_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+        }
+        function getTodayUsage() {
+            const key = getTodayKey();
+            const val = localStorage.getItem(key);
+            return val ? parseInt(val, 10) : 0;
+        }
+        function incrementUsage() {
+            const key = getTodayKey();
+            const current = getTodayUsage();
+            localStorage.setItem(key, current + 1);
+        }
+        function updateRateLimitDisplay() {
+            const used = getTodayUsage();
+            document.getElementById('rate-limit-display').textContent =
+                `Сегодня использовано: ${used} из ${DAILY_LIMIT}`;
+        }
+        updateRateLimitDisplay();
+        async function callGitHubModels(prompt, token, model) {
+            const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: [
+                        { role: 'system', content: 'Ты помощник, который составляет структуру статей на основе ключевых слов.' },
+                        { role: 'user', content: prompt }
+                    ],
+                    max_tokens: 2000,
+                    temperature: 0.7
+                })
+            });
+            if (response.ok) {
+                incrementUsage();
+                updateRateLimitDisplay();
+            }
+            if (!response.ok) {
+                let errorMsg = `HTTP ${response.status}`;
+                try {
+                    const error = await response.json();
+                    errorMsg = error.error?.message || errorMsg;
+                } catch (e) { }
+                throw new Error(errorMsg);
+            }
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+        generateBtn.addEventListener('click', async () => {
+            if (!currentChildValue) {
+                showModal('Внимание', 'Сначала выберите категорию!');
+                return;
+            }
+            const keyItems = document.querySelectorAll('#result-list li span:first-child');
+            if (keyItems.length === 0) {
+                showModal('Внимание', 'Сначала сгенерируйте список ключей (кнопка "Рандомизировать")');
+                return;
+            }
+            const keys = Array.from(keyItems).map(span => span.textContent).join(', ');
+            let template = promptTemplate.value;
+            template = template.replace(/\{\{keys\}\}/g, keys);
+            template = template.replace(/\{\{title\}\}/g, currentChildValue);
+            const token = tokenInput.value.trim();
+            if (!token) {
+                showModal('Ошибка', 'Введите токен GitHub');
+                return;
+            }
+            const model = modelInput.value;
+            generateBtn.disabled = true;
+            const originalText = generateBtn.textContent;
+            generateBtn.textContent = 'Генерация...';
+            structureResult.style.display = 'block';
+            structureResult.textContent = 'Отправка запроса...';
+            try {
+                const result = await callGitHubModels(template, token, model);
+                structureResult.textContent = result;
+            } catch (error) {
+                structureResult.textContent = `Ошибка: ${error.message}`;
+                console.error(error);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = originalText;
+            }
+        });
+        updateRateLimitDisplay();
         addBtn.addEventListener('click', () => {
             addModal.classList.add('active');
-            updateHints(); // Обновляем подсказки перед открытием
+            updateHints();
         });
-
         closeAddBtns.forEach(b => b.addEventListener('click', () => addModal.classList.remove('active')));
-
         saveNewDataBtn.addEventListener('click', async () => {
             const p = newParentInput.value.trim();
             const c = newChildInput.value.trim();
             const q = newQueryInput.value.trim();
             const f = parseInt(newFreqInput.value, 10);
-
-            if (!p || !c || !q) { alert('Заполните все поля!'); return; }
-
-            // Блокируем кнопку на время сохранения
+            if (!p || !c || !q) {
+                showModal('Ошибка', 'Заполните все поля!');
+                return;
+            }
             const originalBtnText = saveNewDataBtn.textContent;
             saveNewDataBtn.textContent = "Сохранение...";
             saveNewDataBtn.disabled = true;
-
             try {
-                // 1. Получаем ссылку на документ Раздела (например, "Кулинария")
                 const sectionRef = doc(db, COLLECTION_NAME, p);
-
-                // 2. Получаем текущие данные этого раздела
                 const docSnap = await getDoc(sectionRef);
-
                 let currentSectionData = {};
                 if (docSnap.exists()) {
                     currentSectionData = docSnap.data();
                 }
-
-                // 3. Создаем/обновляем категорию
                 if (!currentSectionData[c]) {
                     currentSectionData[c] = [];
                 }
-
-                // Проверка на дубликат
                 const exists = currentSectionData[c].some(item => item.query === q);
                 if (exists) {
-                    alert("Такой запрос уже есть в базе!");
+                    showModal('Дубликат', 'Такой запрос уже есть в базе!');
                     saveNewDataBtn.textContent = originalBtnText;
                     saveNewDataBtn.disabled = false;
                     return;
                 }
-
-                // Добавляем
                 currentSectionData[c].push({ query: q, frequency: f || 0 });
-
-                // 4. Записываем обратно в Firebase
-                // setDoc с merge: true создаст документ если его нет, или обновит если есть
                 await setDoc(sectionRef, currentSectionData, { merge: true });
-
-                // Успех
-                newQueryInput.value = ''; // Чистим поле ввода
-                alert(`✅ Запрос "${q}" сохранен в облако!`);
-
-                // Восстанавливаем кнопку
+                newQueryInput.value = '';
+                showModal('Успешно', `✓ Запрос "${q}" сохранен в облако!`);
                 saveNewDataBtn.textContent = originalBtnText;
                 saveNewDataBtn.disabled = false;
-
-                // Переключаем селекты на то, что добавили (чтобы пользователь видел)
                 currentParentValue = p;
                 currentChildValue = c;
-                // Так как onSnapshot сработает автоматически, UI обновится сам, 
-                // нам нужно только подождать чуть-чуть или вручную выбрать в меню после обновления
-
             } catch (e) {
                 console.error("Ошибка сохранения:", e);
-                alert("Ошибка при сохранении: " + e.message);
+                showModal('Ошибка сохранения', 'Ошибка при сохранении: ' + e.message);
                 saveNewDataBtn.textContent = originalBtnText;
                 saveNewDataBtn.disabled = false;
             }
         });
-
-
-
-
-
-        // Модалка инфо
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
         if (infoBtn) infoBtn.addEventListener('click', () => infoModal.classList.add('active'));
         document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', () => infoModal.classList.remove('active')));
-
+        function showInfoModal(text) {
+            const modal = document.getElementById('info-modal');
+            const modalText = document.getElementById('info-modal-text');
+            if (modalText) {
+                modalText.textContent = text;
+            }
+            modal.classList.add('active');
+        }
+        document.querySelectorAll('.info-icon-btn[data-info]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // чтобы не закрывалось сразу
+                const type = btn.getAttribute('data-info');
+                let message = '';
+                switch (type) {
+                    case 'token':
+                        message = 'Вставьте ваш классический токен GitHub, который начинается с ghp_. Создать можно на github.com/settings/tokens (выберите "Classic token", бессрочный, без прав).';
+                        break;
+                    case 'model':
+                        message = 'Выберите модель для генерации. gpt-4o — лучший вариант. gpt-4o-mini — быстрее, качество ниже. Llama-3.3-70B — хз вообще. У всех общий лимит 150 запросов в день.';
+                        break;
+                    case 'content':
+                        message = 'Выберите базовый шаблон для необходимого типа структуры';
+                        break;
+                    case 'toponim':
+                        message = 'Напишите топоним который будет подменять "Москву"';
+                        break;
+                    case 'maket':
+                        message = 'Напишите шаблон промпта. Используйте {{keys}} и {{title}} для вставки ключей и названия услуги / статьи. Промпт можно изменять.';
+                        break;
+                    default:
+                        message = 'Подсказка';
+                }
+                showInfoModal(message);
+            });
+        });
+        (function () {
+            const modelWrapper = document.getElementById('custom-model-select');
+            const modelSelectedDiv = modelWrapper.querySelector('.select-selected');
+            const modelSelectedText = document.getElementById('selected-model-text');
+            const modelOptionsContainer = document.getElementById('model-options-container');
+            const modelHiddenInput = document.getElementById('model-input');
+            const modelOptionItems = modelOptionsContainer.querySelectorAll('.option-item');
+            modelSelectedDiv.addEventListener('click', function (e) {
+                e.stopPropagation();
+                document.querySelectorAll('.select-items').forEach(container => {
+                    if (container !== modelOptionsContainer) {
+                        container.classList.add('select-hide');
+                        container.previousElementSibling.classList.remove('select-arrow-active');
+                    }
+                });
+                modelOptionsContainer.classList.toggle('select-hide');
+                modelSelectedDiv.classList.toggle('select-arrow-active');
+            });
+            modelOptionItems.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const value = this.getAttribute('data-value') || this.textContent;
+                    modelSelectedText.textContent = this.textContent;
+                    modelHiddenInput.value = value;
+                    modelOptionsContainer.classList.add('select-hide');
+                    modelSelectedDiv.classList.remove('select-arrow-active');
+                });
+            });
+        })();
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.select-items').forEach(container => {
+                container.classList.add('select-hide');
+                container.previousElementSibling.classList.remove('select-arrow-active');
+            });
+        });
     </script>
 </body>
 
