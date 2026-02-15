@@ -83,7 +83,7 @@
 
         .centration-modif {
             max-width: 1300px;
-            margin: 0 auto 56px;
+            margin: 0 auto 25px;
             padding: 0 8px;
 
             .p {
@@ -105,7 +105,7 @@
         }
 
         .footer_container {
-            padding-top: 65px;
+            padding: 55px 0 15px;
             margin-top: auto;
             text-align: center;
         }
@@ -129,9 +129,9 @@
 
         .firebase-status {
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 9px;
             background: var(--color-white);
-            border-radius: 8px;
+            border-radius: 4px;
             border: 1px solid var(--color-light-gray);
             display: flex;
             justify-content: space-between;
@@ -160,6 +160,7 @@
         .custom-input {
             max-width: 552px;
             width: 100%;
+
             resize: vertical;
             padding: 10px;
             border: 1px solid var(--color-light-gray);
@@ -172,6 +173,10 @@
         .custom-input:focus {
             border-color: var(--color-gray);
             outline: none;
+        }
+
+        .custom-area {
+            height: 113px;
         }
 
         .custom-dropdown {
@@ -417,22 +422,13 @@
 <body>
     <main>
         <h1>Котопаст</h1>
+        <h2>Надоело копипастить с вордстата и таблиц а потом еще и в нейронку? <br> - Оставь это коту!</h2>
         <div class="centration-modif">
-            <div class="tool-description">
-                <p class="intro">Этот инструмент позволяет генерировать случайные списки поисковых запросов из различных
-                    категорий, по которым нам необходимо откликаться, а также генерировать на основе полученных списков
-                    стурктуры. </p>
-                <p class="intro">Инструмент не делает всю работу за вас, а лишь ускоряет там, где уже была собрана БД
-                    запросов.<br> Там, где их нет - вы должны собирать их самостоятельно. <br>Вы так же можете дополнять
-                    БД
-                    запросов, для облегчения своей работы и работы коллег в будущем.</p>
-            </div>
             <div style="display: flex;">
-                <div class="controls-container">
+                <div class="controls-container control-group">
+                    <label>Облачная база данных:</label>
                     <div class="firebase-status">
                         <div>
-                            <h3 style="margin: 0 0 5px 0; color: var(--color-dark-gray);">Облачная
-                                база данных</h3>
                             <p id="connection-status" style="margin: 0px; font-size: 0.9rem; color: green;">🟢
                                 Подключено.
                                 Разделов: 6</p>
@@ -517,17 +513,23 @@
                             <label for="prompt-template">Шаблон промпта:</label>
                             <button class="info-icon-btn" data-info="maket" title="Показать подсказку">?</button>
                         </div>
-                        <textarea id="prompt-template" class="custom-input" rows="8"></textarea>
+                        <textarea id="prompt-template" class="custom-input custom-area" rows="8"></textarea>
                     </div>
-                    <div class="custom-dropdown" id="custom-model-select">
-                        <div class="select-selected">
-                            <span id="selected-model-text">gpt-4o</span>
-                            <div class="select-arrow"></div>
+                    <div class="control-group">
+                        <div class="label-wrapper">
+                            <label for="prompt-template">Модель:</label>
+                            <button class="info-icon-btn" data-info="model" title="Показать подсказку">?</button>
                         </div>
-                        <div class="select-items select-hide" id="model-options-container">
-                            <div class="option-item" data-value="gpt-4o">gpt-4o</div>
-                            <div class="option-item" data-value="gpt-4o-mini">gpt-4o-mini</div>
-                            <div class="option-item" data-value="Llama-3.3-70B">Llama-3.3-70B</div>
+                        <div class="custom-dropdown" id="custom-model-select">
+                            <div class="select-selected">
+                                <span id="selected-model-text">gpt-4o</span>
+                                <div class="select-arrow"></div>
+                            </div>
+                            <div class="select-items select-hide" id="model-options-container">
+                                <div class="option-item" data-value="gpt-4o">gpt-4o</div>
+                                <div class="option-item" data-value="gpt-4o-mini">gpt-4o-mini</div>
+                                <div class="option-item" data-value="Llama-3.3-70B">Llama-3.3-70B</div>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="model" id="model-input" value="gpt-4o">
@@ -544,6 +546,16 @@
                 </div>
             </div>
         </div>
+        <div class="tool-description">
+            <p class="intro">Этот инструмент позволяет генерировать случайные списки поисковых запросов из различных
+                категорий, по которым нам необходимо откликаться.<br> А также генерировать, с помощью нейросети, на
+                основе
+                полученных списков,
+                стурктуры. </p>
+            <p class="intro">Инструмент не делает всю работу за вас, а лишь ускоряет там, где уже была собрана БД
+                запросов.<br> Там, где их нет - вы должны собирать их самостоятельно. <br>Вы так же можете дополнять
+                БД
+                запросов, для облегчения своей работы и работы коллег в будущем.</p>
         </div>
     </main>
     <footer class="footer_container">
@@ -650,14 +662,12 @@
         onSnapshot(collection(db, COLLECTION_NAME), (snapshot) => {
             const newData = {};
             let isEmpty = true;
-
             snapshot.forEach((doc) => {
                 // doc.id = Название раздела (например, "Кулинария")
                 // doc.data() = Объект с категориями (например, { "Супы": [...] })
                 newData[doc.id] = doc.data();
                 isEmpty = false;
             });
-
             globalData = newData;
             connectionStatus.textContent = `🟢 Подключено. Разделов: ${Object.keys(globalData).length}`;
             connectionStatus.style.color = 'green';
@@ -891,7 +901,6 @@ H2 - *какой-то заголовок*`;
 
         const STORAGE_KEY_SERVICE = 'saved_prompt_service';
         const STORAGE_KEY_ARTICLE = 'saved_prompt_article';
-
         function loadPromptForType(type) {
             const key = type === 'service' ? STORAGE_KEY_SERVICE : STORAGE_KEY_ARTICLE;
             const saved = localStorage.getItem(key);
